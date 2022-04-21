@@ -16,7 +16,7 @@ console.log(final2014[0]['Home Team Goals'])
 //(d) Away Team goals for 2014 world cup final
 console.log(final2014[0]['Away Team Goals'])
 //(e) Winner of 2014 world cup final */
-console.log(final2014[0]['Win conditions'])
+console.log(final2014[0]['Home Team Name'])
 
 
 /* 🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀 Task 2: 🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀 
@@ -109,24 +109,62 @@ Create a function called `getCountryWins` that takes the parameters `data` and `
 
 Hint: Investigate your data to find "team initials"!
 Hint: use `.reduce` */
-
-function getCountryWins(/* code here */) {
-
-    /* code here */
-
+function getCountryWins(data, initials) {
+    const winners = getWinners(data, getFinals);
+    let name = "";
+    for (let i = 0; i<data.length; i++){
+        if (data[i]['Away Team Initials']===initials){
+            name = data[i]["Away Team Name"]
+            break;
+        }
+        if (data[i]['Home Team Initials']===initials){
+            name = data[i]["Home Team Name"]
+            break;
+        }
+    }
+    return winners.reduce((acc, team)=> team === name? acc += 1: acc += 0, 0)
 }
-
-
+// console.log(getCountryWins(fifaData, 'ARG'))
 
 /* 💪💪💪💪💪 Stretch 2: 💪💪💪💪💪 
 Write a function called getGoals() that accepts a parameter `data` and returns the team with the most goals score per appearance (average goals for) in the World Cup finals */
 
-function getGoals(/* code here */) {
+function getGoals(data) {
+    const gameData = [];
+    for (let i = 0; i < data.length; i++){
+        if (data[i].Stage === 'Final') {
+            let team = data[i];
+            let homeName = team['Home Team Name'];
+            let awayName = team['Away Team Name'];
+            let homeGoals = team['Home Team Goals'];
+            let awayGoals = team['Away Team Goals'];
+            gameData.push({name: homeName, goals: homeGoals});
+            gameData.push({name: awayName, goals: awayGoals});
+        }
+    }
+    let averageGoals = [];
+    for (let i = 0; i < gameData.length; i++){ 
+        let team = gameData[i].name;
+        // check to see if Team name is already in array -- if not 
+        if(!averageGoals.some(e => e.name === gameData[i].name)){
+            let count = 0;
+            let goals = 0;
+            // get count and goals for each object with matching name
+            for (let j = 0; j < gameData.length; j++){
 
-    /* code here */
+                if(gameData[j].name === team){
+                    count++;
+                    goals += gameData[j].goals;
+                }
 
+            }
+            let average = goals/count
+            averageGoals.push({name:team, avg:average})
+        }
+    }const sorted = averageGoals.sort((a,b) => b.avg - a.avg);
+    return sorted[0].avg
 }
-
+console.log(getGoals(fifaData))
 
 /* 💪💪💪💪💪 Stretch 3: 💪💪💪💪💪
 Write a function called badDefense() that accepts a parameter `data` and calculates the team with the most goals scored against them per appearance (average goals against) in the World Cup finals */
