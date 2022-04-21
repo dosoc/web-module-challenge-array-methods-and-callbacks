@@ -162,18 +162,49 @@ function getGoals(data) {
             averageGoals.push({name:team, avg:average})
         }
     }const sorted = averageGoals.sort((a,b) => b.avg - a.avg);
-    return sorted[0].avg
+    return sorted[0]
 }
 console.log(getGoals(fifaData))
 
 /* 💪💪💪💪💪 Stretch 3: 💪💪💪💪💪
 Write a function called badDefense() that accepts a parameter `data` and calculates the team with the most goals scored against them per appearance (average goals against) in the World Cup finals */
 
-function badDefense(/* code here */) {
+function badDefense(data) {
+    const gameData = [];
+    for (let i = 0; i < data.length; i++){
+        if (data[i].Stage === 'Final') {
+            let team = data[i];
+            let homeName = team['Home Team Name'];
+            let awayName = team['Away Team Name'];
+            let homeOpponent = team['Away Team Goals'];
+            let AwayOpponent = team['Home Team Goals'];
+            gameData.push({name: homeName, goals: homeOpponent});
+            gameData.push({name: awayName, goals: AwayOpponent});
+        }
+    }
+    let averageGoals = [];
+    for (let i = 0; i < gameData.length; i++){ 
+        let team = gameData[i].name;
+        // check to see if Team name is already in array -- if not 
+        if(!averageGoals.some(e => e.name === gameData[i].name)){
+            let count = 0;
+            let goals = 0;
+            // get count and goals for each object with matching name
+            for (let j = 0; j < gameData.length; j++){
 
-    /* code here */
+                if(gameData[j].name === team){
+                    count++;
+                    goals += gameData[j].goals;
+                }
 
+            }
+            let average = goals/count
+            averageGoals.push({name:team, avg:average})
+        }
+    }const sorted = averageGoals.sort((a,b) => b.avg - a.avg);
+    return sorted[0]
 }
+console.log(badDefense(fifaData))
 
 
 /* If you still have time, use the space below to work on any stretch goals of your chosing as listed in the README file. */
